@@ -1,0 +1,32 @@
+Data source:
+- advanced metrics from outlets such as Football Outsiders (particularly for schedule strength) and Pro Football Focus
+- madden rating
+
+Other factors to research:
+- 1. Coach tendencies and their respective effect on value of various positions. (e.g. If coach likes to establish run early, it's more likely they RBs will get a value boost)
+
+- 2A. See if you can get a value for strength of schedule, and which weeks you are weak, and which week you can afford to lose. For example, if say in week 7, you are projected to lose against the strongest team in the league, that is not as bad as if you are projected to lose against the weakest team in the league. Because you do NOT want to waste easy wins.
+- 2B. Continuing with the idea above, if the tool has an algorithm which can provide the odds of winning, given the rest of the season schedule and who you are against that week, that would further solidify certain trade decisions.
+
+
+QB:
+- higher WR ratings (higher weight given to WR1, middle weight given to WR2, lower weight given to WR3) should increase value of QB 
+
+WR:
+- higher awareness, accuracy and throw power rating for QB should increase value of WRs
+- higher delta between the ratings of WR1 and WR2 on a team should increase value of WR1
+- lower delta between the ratings of WR1 and WR2 on a team should increase value of WR2
+- WR1 value should be inversely related to CB1's rating
+- WR2 value should be inversely related to CB2's rating
+- WR3 value should be inversely related to SCB1's rating (slot cornerback) 
+- 
+
+
+RB:
+- higher overall defence rating should increase value of RBs
+- higher delta between the RB1 and RB2 on a team should increase value of RB1
+- higher run-in touchdown ratio to total TD of QB should decrease value of RB
+
+
+Kicker:
+- team's redzone conversion rate should have inverse relationship to value of kicker
