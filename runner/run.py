@@ -57,6 +57,6 @@ def main():
 
 
 if __name__ == "__main__":
-    load_madden_rating_data()
-    load_injury_data()
-    #main()
+    #load_madden_rating_data()
+    #load_injury_data()
+    main()

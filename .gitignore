@@ -1,4 +1,4 @@
 **/.idea
 notes.txt
 runner/extractors/__pycache__/
-runner/utilities/__pycache__/
+runner/utilities/__pycache__/*

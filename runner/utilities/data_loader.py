@@ -10,8 +10,7 @@ config = configparser.ConfigParser()
 config.read(r'C:\Users\Jihoon\Documents\Projects\fantasy_football_analyzer\local.ini')
 teams = list(config['constants']['teams'].split(","))
 data_path = config['path']['data']
-injury_path = config['path']['injury']
-
+injuries_path = config['path']['injuries']
 data_file_type = config['constants']['data_file_type']
 
 madden_ratings_api = config['madden']['api_url']
@@ -62,6 +61,6 @@ def load_injury_data():
 
     df.fillna(0, inplace=True)
 
-    output_file = injury_path+'injuries'+data_file_type
+    output_file = injuries_path+'injuries'+data_file_type
 
     df.to_json(output_file, orient='records')
