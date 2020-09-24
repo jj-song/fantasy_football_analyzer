@@ -1,16 +1,22 @@
 import pandas as pd
-import requests
+from requests import get
 import configparser
+import requests
+import json
+from bs4 import BeautifulSoup
+from sys import argv
 
 config = configparser.ConfigParser()
 config.read(r'C:\Users\Jihoon\Documents\Projects\fantasy_football_analyzer\local.ini')
 teams = list(config['constants']['teams'].split(","))
 data_path = config['path']['data']
+injuries_path = config['path']['injuries']
 data_file_type = config['constants']['data_file_type']
+
 madden_ratings_api = config['madden']['api_url']
 madden_filter = config['madden']['filter']
 
-def load_data():
+def load_madden_rating_data():
     """
     This function gathers player data using the madden rating API.
     The player data is saved under their respective team json files.
@@ -26,3 +32,35 @@ def load_data():
         data_as_json = requests.get(url).json()
         df = pd.DataFrame(data_as_json['docs'])
         df.to_json(output_file, orient='records')
+
+
+def load_injury_data():
+    url = "https://www.pro-football-reference.com/players/injuries.htm"
+
+
+
+    defColumnSettings = {
+        'axis': 1,
+        'inplace': True
+    }
+
+    #df.drop('ColumnName', axis=1, inplace=True)
+    #df.drop('ColumnName', **defColumnSettings)
+
+
+    response = get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find('table', {'id': 'injuries'})
+    df = pd.read_html(str(table))[0]
+    #df.columns = df.columns.droplevel(level=0)
+
+    df.drop(['Details'],
+            **defColumnSettings)
+
+    df = df[df['Pos'] != 'Pos']
+
+    df.fillna(0, inplace=True)
+
+    output_file = injuries_path+'injuries'+data_file_type
+
+    df.to_json(output_file, orient='records')
