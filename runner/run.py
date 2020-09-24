@@ -1,5 +1,5 @@
 import configparser
-from runner.utilities.data_loader import load_data
+from runner.utilities.data_loader import load_madden_rating_data, load_injury_data
 from runner.extractors.high_awareness_players import get_high_awareness_49ers
 from runner.extractors.get_positions import get_best_players
 from runner.utilities.data_sorter import list_sort_by_dict_average_value
@@ -16,6 +16,7 @@ front_7_positions = {
     'MLB': 1,
     'ROLB': 1
 }
+
 secondary_positions = {
     'SS': 1,
     'FS': 1,
@@ -56,5 +57,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # load_data()
-    main()
+    load_madden_rating_data()
+    load_injury_data()
+    #main()

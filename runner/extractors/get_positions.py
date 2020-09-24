@@ -6,9 +6,6 @@ config.read(r'C:\Users\Jihoon\Documents\Projects\fantasy_football_analyzer\local
 teams = list(config['constants']['teams'].split(","))
 data_path = config['path']['data']
 
-def position_has_two_slots(position):
-    return any(char.isdigit() for char in position)
-
 def get_players(team, positions):
     """
     This function returns all players given positions
