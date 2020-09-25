@@ -44,7 +44,7 @@ team_city_matcher = {
     'Vikings': 'MIN'
 }
 
-unlikely_to_play_injuries = ['doubtful', 'out', 'I-R']
+injury_designations = ['doubtful', 'out', 'I-R']
 
 
 def get_players(team, positions):
@@ -72,16 +72,18 @@ def get_players(team, positions):
             player_data_copy = player_data.copy()
             position_players.append(player_data_copy)
 
+    # aggregated a list of injured players on that team.
     team_injuries = []
     for injured_player in injury_data:
         if injured_player['Tm'] == team_city_matcher[team]:
             team_injuries.append(injured_player)
 
+    # compared injured player list with player list to remove injured players from final list.
     position_players_to_return = position_players.copy()
     for position_player in position_players:
         for team_injury in team_injuries:
             if position_player['name'] == team_injury['Player'] and \
-                    team_injury['Class'] in unlikely_to_play_injuries:
+                    team_injury['Class'] in injury_designations:
                 position_players_to_return.remove(position_player)
 
     return position_players_to_return
@@ -96,21 +98,24 @@ def get_best_players(team, positions):
 
     for player in all_players_of_position:
         position = player['position']
-        if positions[position] > 1:
+        num_of_positions = positions[position]
+        if num_of_positions > 1:
             # TODO: change this so that it can handle dynamically, even for positions when it's has more than 2 slots.
             #       Right now, it handles only up to 2 slots because it is hardcoded.
-            if player['position']+'1' in top_players:
-                if player['overall_rating'] > top_players[player['position']+'1']['overall_rating']:
-                    top_players[player['position']+'2'] = top_players[player['position'] + '1']
-                    top_players[player['position'] + '1'] = player
-                else:
-                    if player['position']+'2' in top_players:
-                        if player['overall_rating'] > top_players[player['position']+'2']['overall_rating']:
-                            top_players[player['position'] + '2'] = player
+            #       Added a bit more to it but it still breaks when num_position is > 2.
+            for i in range(1, num_of_positions):
+                if player['position'] + str(i) in top_players:
+                    if player['overall_rating'] > top_players[player['position'] + str(i)]['overall_rating']:
+                        top_players[player['position'] + str(i+1)] = top_players[player['position'] + str(i)]
+                        top_players[player['position'] + str(i)] = player
                     else:
-                        top_players[player['position']+'2'] = player
-            else:
-                top_players[player['position']+'1'] = player
+                        if player['position'] + str(i+1) in top_players:
+                            if player['overall_rating'] > top_players[player['position'] + str(i+1)]['overall_rating']:
+                                top_players[player['position'] + str(i+1)] = player
+                        else:
+                            top_players[player['position'] + str(i+1)] = player
+                else:
+                    top_players[player['position'] + str(i)] = player
         else:
             # This is for 99% of the cases, where the position being iterated has a dictionary value of 1.
             if player['position'] in top_players:

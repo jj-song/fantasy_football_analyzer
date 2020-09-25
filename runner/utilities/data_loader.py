@@ -11,6 +11,7 @@ config.read(r'C:\Users\Jihoon\Documents\Projects\fantasy_football_analyzer\local
 teams = list(config['constants']['teams'].split(","))
 data_path = config['path']['data']
 injuries_path = config['path']['injuries']
+schedule_path = config['path']['schedule']
 data_file_type = config['constants']['data_file_type']
 
 madden_ratings_api = config['madden']['api_url']
@@ -37,23 +38,15 @@ def load_madden_rating_data():
 def load_injury_data():
     url = "https://www.pro-football-reference.com/players/injuries.htm"
 
-
-
     defColumnSettings = {
         'axis': 1,
         'inplace': True
     }
 
-    #df.drop('ColumnName', axis=1, inplace=True)
-    #df.drop('ColumnName', **defColumnSettings)
-
-
     response = get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find('table', {'id': 'injuries'})
     df = pd.read_html(str(table))[0]
-    #df.columns = df.columns.droplevel(level=0)
-
     df.drop(['Details'],
             **defColumnSettings)
 
@@ -62,5 +55,29 @@ def load_injury_data():
     df.fillna(0, inplace=True)
 
     output_file = injuries_path+'injuries'+data_file_type
+
+    df.to_json(output_file, orient='records')
+
+
+def load_schedule_data():
+    url = "https://www.pro-football-reference.com/years/2020/games.htm"
+
+    defColumnSettings = {
+        'axis': 1,
+        'inplace': True
+    }
+
+    response = get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find('table', {'id': 'games'})
+    df = pd.read_html(str(table))[0]
+    df.drop(['PtsW', 'PtsL', 'YdsW', 'TOW', 'YdsL', 'TOL', 'Unnamed: 5', 'Unnamed: 7'],
+            **defColumnSettings)
+
+    df = df[df['Week'] != 'Week']
+
+    df.fillna(0, inplace=True)
+
+    output_file = schedule_path+'schedule'+data_file_type
 
     df.to_json(output_file, orient='records')
