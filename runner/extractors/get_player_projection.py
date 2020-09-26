@@ -48,7 +48,7 @@ def get_player_accessory_data(team, player, week):
             #       If it's a RB, heavily weigh the front 7.
             overall_data['opponent_d_front_7_avg'] = get_best_players_of_team(opposing_team_mapped, d_front_7_positions).get('average')
             overall_data['opponent_d_secondary_avg'] = get_best_players_of_team(opposing_team_mapped, d_secondary_positions).get('average')
-
+            overall_data['opposing team'] = opposing_team
             return overall_data
 
 

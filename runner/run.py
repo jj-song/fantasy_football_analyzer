@@ -30,7 +30,7 @@ def main():
     top_o_line_avg = list_sort_by_dict_average_value(team_o_line)
     top_o_skilled_avg = list_sort_by_dict_average_value(team_o_skilled)
 
-    assessment_data = get_player_accessory_data(team='49ers',player='Jerick McKinnon',week=2)
+    assessment_data = get_player_accessory_data(team='Titans',player='Corey Davis',week=3)
 
     print("hello")
 
