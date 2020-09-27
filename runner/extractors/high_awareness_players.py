@@ -3,7 +3,7 @@ import json
 
 config = configparser.ConfigParser()
 config.read(r'C:\Users\Jihoon\Documents\Projects\fantasy_football_analyzer\local.ini')
-data_path = config['path']['data']
+players_path = config['path']['players']
 
 def get_high_awareness_49ers():
     """
@@ -11,7 +11,7 @@ def get_high_awareness_49ers():
     This function proves data is in good condition and basically functionality
     of the script works.
     """
-    file = open(data_path + '49ers.json')
+    file = open(players_path + '49ers.json')
     data = json.load(file)
     high_awareness_players = []
 

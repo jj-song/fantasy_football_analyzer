@@ -3,4 +3,5 @@ notes.txt
 runner/extractors/__pycache__/
 runner/utilities/__pycache__/*
 runner/utilities/__pycache__/*.pyc
-data/Ravens.json
+data/
+runner/utilities/__pycache__/.*

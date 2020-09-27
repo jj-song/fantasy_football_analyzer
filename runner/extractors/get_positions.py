@@ -1,57 +1,21 @@
 import configparser
 import json
+from runner.utilities.mapping import fullTeam_shortCity_map
 
 config = configparser.ConfigParser()
 config.read(r'C:\Users\Jihoon\Documents\Projects\fantasy_football_analyzer\local.ini')
 teams = list(config['constants']['teams'].split(","))
-data_path = config['path']['data']
+players_path = config['path']['players']
 injuries_path = config['path']['injuries']
 data_file_type = config['constants']['data_file_type']
-
-team_city_matcher = {
-    '49ers':'SFO',
-    'Bears':'CHI',
-    'Bengals':'CIN',
-    'Bills':'BUF',
-    'Broncos':'DEN',
-    'Browns':'CLE',
-    'Buccaneers': 'TAM',
-    'Cardinals': 'ARI',
-    'Chargers': 'LAC',
-    'Chiefs': 'KAN',
-    'Colts': 'IND',
-    'Cowboys': 'DAL',
-    'Dolphins': 'MIA',
-    'Eagles': 'PHI',
-    'Falcons': 'ATL',
-    'Giants': 'NYG',
-    'Jaguars': 'JAX',
-    'Jets': 'NYJ',
-    'Lions': 'DET',
-    'Packers': 'GNB',
-    'Panthers': 'CAR',
-    'Patriots': 'NWE',
-    'Raiders': 'LVR',
-    'Rams': 'LAR',
-    'Ravens': 'BAL',
-    'Redskins': 'WAS',
-    'Football Team':'WAS',
-    'Saints': 'NOR',
-    'Seahawks': 'SEA',
-    'Steelers': 'PIT',
-    'Texans': 'HOU',
-    'Titans': 'TEN',
-    'Vikings': 'MIN'
-}
-
 injury_designations = ['doubtful', 'out', 'I-R']
 
 
-def get_players(team, positions):
+def get_all_players_on_team(team, positions):
     """
     This function returns all players given positions
     """
-    madden_file = open(data_path + team + data_file_type)
+    madden_file = open(players_path + team + data_file_type)
     madden_data = json.load(madden_file)
 
     injury_file = open(injuries_path+'injuries'+data_file_type)
@@ -75,7 +39,7 @@ def get_players(team, positions):
     # aggregated a list of injured players on that team.
     team_injuries = []
     for injured_player in injury_data:
-        if injured_player['Tm'] == team_city_matcher[team]:
+        if injured_player['Tm'] == fullTeam_shortCity_map[team]:
             team_injuries.append(injured_player)
 
     # compared injured player list with player list to remove injured players from final list.
@@ -89,11 +53,11 @@ def get_players(team, positions):
     return position_players_to_return
 
 
-def get_best_players(team, positions):
+def get_best_players_of_team(team, positions):
     """
     This function returns all the best players given positions
     """
-    all_players_of_position = get_players(team, positions)
+    all_players_of_position = get_all_players_on_team(team, positions)
     top_players = dict()
 
     for player in all_players_of_position:
