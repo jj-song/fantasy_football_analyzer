@@ -28,7 +28,10 @@ def get_player_accessory_data(team, player, week):
 
         if full_name == player:
             # Function to get which team he's up against
-            opposing_team = get_opposing_team(team, week)
+            if team == 'Football_Team':
+                opposing_team = get_opposing_team('Football Team', week)
+            else:
+                opposing_team = get_opposing_team(team, week)
             opposing_team_mapped = fullTeam_shortTeam_map[opposing_team]
 
             if position == 'HB':
