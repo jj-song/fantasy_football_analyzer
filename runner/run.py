@@ -1,5 +1,5 @@
 import configparser
-from runner.utilities.data_loader import load_player_rating_data, load_injury_data, load_schedule_data
+from runner.utilities.data_loader import load_player_rating_data, load_injury_data, load_schedule_data, load_all_data
 from runner.extractors.get_positions import get_best_players_of_team
 from runner.utilities.data_sorter import list_sort_by_dict_average_value
 from runner.extractors.get_player_projection import get_player_accessory_data
@@ -45,12 +45,11 @@ def main():
     assessment_data['baker_mayfield'] = get_player_accessory_data(team='Browns', player='Baker Mayfield', week=3)
     assessment_data['drew_brees'] = get_player_accessory_data(team='Saints', player='Drew Brees', week=3)
     assessment_data['deshaun_watson'] = get_player_accessory_data(team='Texans', player='Deshaun Watson', week=3)
+    assessment_data['patrick_mahomes'] = get_player_accessory_data(team='Chiefs', player='Patrick Mahomes', week=3)
 
     print("hello")
 
 
 if __name__ == "__main__":
-    # load_player_rating_data()
-    # load_injury_data()
-    # load_schedule_data()
+    #load_all_data()
     main()
