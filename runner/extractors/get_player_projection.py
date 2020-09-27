@@ -20,37 +20,25 @@ def get_player_accessory_data(team, player, week):
     madden_data = json.load(madden_file)
     overall_data = dict()
     player_data = dict()
+    player_value = 0
 
     for madden_datum in madden_data:
         full_name = f"{madden_datum.get('firstName', '')} {madden_datum.get('lastName', '')}"
         position = madden_datum.get('position', "")
-        player_rating = madden_datum.get('overall_rating', "")
-        full_info = madden_datum
 
         if full_name == player:
-            player_data['position'] = position
-            player_data['player_rating'] = player_rating
-            player_data['name'] = full_name
-            overall_data['player_data'] = player_data
-
-            # TODO: Function to get which team he's up against
+            # Function to get which team he's up against
             opposing_team = get_opposing_team(team, week)
             opposing_team_mapped = fullTeam_shortTeam_map[opposing_team]
 
-            # TODO: Function to get rating for his oline:
-            #       Depending on the position of player selected, it will lead querying for different items.
-            #       For example, if it's a running back, put heavy weight on oline, and a little weight on
-            #       QB and WR because otherwise they'll stack the box.
-            overall_data['player_o_line_avg'] = get_best_players_of_team(team, o_line_positions).get('average')
+            if position == 'HB':
+                overall_data = get_weighted_rb_value(full_name, madden_datum, team, opposing_team_mapped)
+            elif position == 'WR':
+                overall_data = get_weighted_wr_value(full_name, madden_datum, team, opposing_team_mapped)
+            elif position == 'QB':
+                overall_data = get_weighted_qb_value(full_name, madden_datum, team, opposing_team_mapped)
 
-            # TODO: Function to get opponent front 7:
-            #       Again, depending on the position of player selected, if it's a WR, then heavily weigh the secondary
-            #       If it's a RB, heavily weigh the front 7.
-            overall_data['opponent_d_front_7_avg'] = get_best_players_of_team(opposing_team_mapped, d_front_7_positions).get('average')
-            overall_data['opponent_d_secondary_avg'] = get_best_players_of_team(opposing_team_mapped, d_secondary_positions).get('average')
-            overall_data['opposing team'] = opposing_team
             return overall_data
-
 
 def get_opposing_team(player_team, week):
 
@@ -66,3 +54,58 @@ def get_opposing_team(player_team, week):
                 opponent_team = game.get('Winner/tie', '')
                 return opponent_team
 
+def get_weighted_rb_value(full_name, madden_datum, player_team, opposing_team):
+    overall_data = dict()
+    overall_data['name'] = full_name
+    overall_data['position'] = madden_datum.get('position')
+    overall_data['player_madden_rating'] = madden_datum.get('overall_rating')
+    overall_data['player_o_line_avg'] = get_best_players_of_team(player_team, o_line_positions).get('average')
+    overall_data['opponent_d_front_7_avg'] = get_best_players_of_team(opposing_team, d_front_7_positions).get('average')
+    overall_data['opponent_d_secondary_avg'] = get_best_players_of_team(opposing_team, d_secondary_positions).get('average')
+    # TODO: Do some more research to update the formula here. This is the most important part of the program since it will give you the actual
+    #       Weighted values of the players
+    overall_data['weighted_player_rating'] = overall_data['player_madden_rating'] + (overall_data['player_o_line_avg'] - overall_data['opponent_d_front_7_avg'])
+    return overall_data
+
+def get_weighted_wr_value(full_name, madden_datum, player_team, opposing_team):
+    overall_data = dict()
+    overall_data['name'] = full_name
+    overall_data['position'] = madden_datum.get('position')
+    overall_data['player_madden_rating'] = madden_datum.get('overall_rating')
+    overall_data['player_o_line_avg'] = get_best_players_of_team(player_team, o_line_positions).get('average')
+    overall_data['opponent_d_front_7_avg'] = get_best_players_of_team(opposing_team, d_front_7_positions).get('average')
+    overall_data['opponent_d_secondary_avg'] = get_best_players_of_team(opposing_team, d_secondary_positions).get('average')
+    overall_data['player_qb'] = get_best_players_of_team(player_team, o_skilled_positions).get('QB').get('overall_rating')
+    # TODO: Do some more research to update the formula here. This is the most important part of the program since it will give you the actual
+    #       Weighted values of the players
+    overall_data['weighted_player_rating'] = overall_data['player_madden_rating'] + \
+                                             (
+                                                (overall_data['player_o_line_avg']*.75 + overall_data['player_qb']*.25)
+                                              - (overall_data['opponent_d_front_7_avg']*.50 + overall_data['opponent_d_secondary_avg']*.50)
+                                              )
+    return overall_data
+
+def get_weighted_qb_value(full_name, madden_datum, player_team, opposing_team):
+    overall_data = dict()
+    overall_data['name'] = full_name
+    overall_data['position'] = madden_datum.get('position')
+    overall_data['player_madden_rating'] = madden_datum.get('overall_rating')
+    overall_data['player_o_line_avg'] = get_best_players_of_team(player_team, o_line_positions).get('average')
+    overall_data['opponent_d_front_7_avg'] = get_best_players_of_team(opposing_team, d_front_7_positions).get(
+        'average')
+    overall_data['opponent_d_secondary_avg'] = get_best_players_of_team(opposing_team, d_secondary_positions).get(
+        'average')
+    wr1 = get_best_players_of_team(player_team, o_skilled_positions).get('WR1')
+    wr2 = get_best_players_of_team(player_team, o_skilled_positions).get('WR2')
+
+    # TODO: Do some more research to update the formula here. This is the most important part of the program since it will give you the actual
+    #       Weighted values of the players
+
+    overall_data['weighted_wr1_rating'] = get_weighted_wr_value(wr1.get('name'), wr1, player_team, opposing_team).get('weighted_player_rating')
+    overall_data['weighted_wr2_rating'] = get_weighted_wr_value(wr2.get('name'), wr2, player_team, opposing_team).get('weighted_player_rating')
+
+    overall_data['weighted_player_rating'] = overall_data['player_madden_rating'] + (overall_data['player_o_line_avg'] - overall_data['opponent_d_front_7_avg']) \
+                                             + ((overall_data['weighted_wr1_rating'] * .6 +  overall_data['weighted_wr2_rating'] * .4) -
+                                                (overall_data['opponent_d_secondary_avg']))
+
+    return overall_data
