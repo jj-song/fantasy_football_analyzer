@@ -32,16 +32,25 @@ def get_player_accessory_data(team, player, week):
                 opposing_team = get_opposing_team('Football Team', week)
             else:
                 opposing_team = get_opposing_team(team, week)
-            opposing_team_mapped = fullTeam_shortTeam_map[opposing_team]
-
-            if position == 'HB':
-                overall_data = get_weighted_rb_value(full_name, madden_datum, team, opposing_team_mapped)
-            elif position == 'WR':
-                overall_data = get_weighted_wr_value(full_name, madden_datum, team, opposing_team_mapped)
-            elif position == 'QB':
-                overall_data = get_weighted_qb_value(full_name, madden_datum, team, opposing_team_mapped)
+            if opposing_team is not None:
+                opposing_team_mapped = fullTeam_shortTeam_map[opposing_team]
+                if position == 'HB':
+                    overall_data = get_weighted_rb_value(full_name, madden_datum, team, opposing_team_mapped)
+                elif position == 'WR':
+                    overall_data = get_weighted_wr_value(full_name, madden_datum, team, opposing_team_mapped)
+                elif position == 'QB':
+                    overall_data = get_weighted_qb_value(full_name, madden_datum, team, opposing_team_mapped)
 
             return overall_data
+
+    if not overall_data:
+        overall_data['name'] = player
+        overall_data['position'] = "bye"
+        overall_data['player_madden_rating'] = 0
+        overall_data['player_o_line_avg'] = 0
+        overall_data['opponent_d_front_7_avg'] = 0
+        overall_data['opponent_d_secondary_avg'] = 0
+
 
 def get_opposing_team(player_team, week):
 
@@ -68,6 +77,7 @@ def get_weighted_rb_value(full_name, madden_datum, player_team, opposing_team):
     # TODO: Do some more research to update the formula here. This is the most important part of the program since it will give you the actual
     #       Weighted values of the players
     overall_data['weighted_player_rating'] = overall_data['player_madden_rating'] + (overall_data['player_o_line_avg'] - overall_data['opponent_d_front_7_avg'])
+
     return overall_data
 
 def get_weighted_wr_value(full_name, madden_datum, player_team, opposing_team):
@@ -86,6 +96,8 @@ def get_weighted_wr_value(full_name, madden_datum, player_team, opposing_team):
                                                 (overall_data['player_o_line_avg']*.75 + overall_data['player_qb']*.25)
                                               - (overall_data['opponent_d_front_7_avg']*.50 + overall_data['opponent_d_secondary_avg']*.50)
                                               )
+    if not overall_data['weighted_player_rating']:
+        overall_data['weighted_player_rating'] = 0
     return overall_data
 
 def get_weighted_qb_value(full_name, madden_datum, player_team, opposing_team):
@@ -110,5 +122,8 @@ def get_weighted_qb_value(full_name, madden_datum, player_team, opposing_team):
     overall_data['weighted_player_rating'] = overall_data['player_madden_rating'] + (overall_data['player_o_line_avg'] - overall_data['opponent_d_front_7_avg']) \
                                              + ((overall_data['weighted_wr1_rating'] * .6 +  overall_data['weighted_wr2_rating'] * .4) -
                                                 (overall_data['opponent_d_secondary_avg']))
-
+    if full_name == 'C.J. Beathard':
+        print("hi")
+    if not overall_data['weighted_player_rating']:
+        overall_data['weighted_player_rating'] = 0
     return overall_data

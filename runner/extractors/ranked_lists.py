@@ -49,12 +49,26 @@ def get_ranked_positions():
         for player in team_all[team]:
             name = player.get('name')
             position = player.get('position')
+            # if name == 'Drew Brees':
+            #     print("hi")
             if position == 'QB':
-                players_weighted_qb[name] = get_player_accessory_data(team=team, player=name, week=3)
+                players_weighted_qb[name] = get_player_accessory_data(team=team, player=name, week=7)
             elif position == 'WR':
-                players_weighted_wr[name] = get_player_accessory_data(team=team, player=name, week=3)
+                players_weighted_wr[name] = get_player_accessory_data(team=team, player=name, week=7)
             elif position == 'HB':
-                players_weighted_rb[name] = get_player_accessory_data(team=team, player=name, week=3)
+                players_weighted_rb[name] = get_player_accessory_data(team=team, player=name, week=7)
+
+    for x in list(players_weighted_qb.keys()):
+        if len(players_weighted_qb[x]) == 0:
+            del players_weighted_qb[x]
+
+    for x in list(players_weighted_wr.keys()):
+        if len(players_weighted_wr[x]) == 0:
+            del players_weighted_wr[x]
+
+    for x in list(players_weighted_rb.keys()):
+        if len(players_weighted_rb[x]) == 0:
+            del players_weighted_rb[x]
 
     top_qb = list_sort_by_dict_value(players_weighted_qb, 'weighted_player_rating')
     top_wr = list_sort_by_dict_value(players_weighted_wr, 'weighted_player_rating')
