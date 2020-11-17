@@ -27,3 +27,9 @@ o_skilled_positions = {
     'QB': 1,
     'TE': 1
 }
+
+fantasy_positions = {
+    'HB': 1,
+    'WR': 1,
+    'QB': 1
+}
