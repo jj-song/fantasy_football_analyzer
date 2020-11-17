@@ -52,11 +52,17 @@ def get_ranked_positions():
             # if name == 'Drew Brees':
             #     print("hi")
             if position == 'QB':
-                players_weighted_qb[name] = get_player_accessory_data(team=team, player=name, week=7)
+                players_weighted_qb[name] = get_player_accessory_data(team=team, player=name, week=14)
+                # TODO: Add logic here to account for backup quarterbacks. If they are not the highest rated QB
+                #       Make sure there is n indicator like isStartingQB = True or something. Use this to sort.
             elif position == 'WR':
-                players_weighted_wr[name] = get_player_accessory_data(team=team, player=name, week=7)
+                players_weighted_wr[name] = get_player_accessory_data(team=team, player=name, week=14)
+                # TODO: take into account the number of attempts of throw for QB. It might be a run heavy team like
+                #       vikings or browns.
             elif position == 'HB':
-                players_weighted_rb[name] = get_player_accessory_data(team=team, player=name, week=7)
+                players_weighted_rb[name] = get_player_accessory_data(team=team, player=name, week=14)
+                # TODO: Do similar thing here as QB but instead, make it so that it uses snap counts or attempts/receive
+                #       to establish pecking order.
 
     for x in list(players_weighted_qb.keys()):
         if len(players_weighted_qb[x]) == 0:
